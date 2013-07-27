@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Beandipper.github.io : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Beandipper.github.io</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/beandipper">View on GitHub</a>
+
+          <h1 id="project_title">Beandipper.github.io</h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a name="testing-out-source-maps-with-clojurescript" class="anchor" href="#testing-out-source-maps-with-clojurescript"><span class="octicon octicon-link"></span></a>Testing out source-maps with clojurescript</h3>
+
+<p><img src="http://i.imgur.com/Lea1zjz.jpg?1" alt="Happy debugging!"></p>
+
+<p>So I heard about getting source maps working with clojurescript and after asking around on #clojure seangrove was nice enough to help me out. I'm basically hijacking the gist that <a href="https://github.com/sgrove" class="user-mention">@sgrove</a> sent me so all credit is to him. Using lein cljsbuild, lein will create a .map file which can be used after enabling source-map debugging in browsers. <a href="http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/">Here is a good intro if you aren't really sure what source maps are about.</a>. Now to get started:</p>
+
+<h3>
+<a name="1-setup-your-projectclj" class="anchor" href="#1-setup-your-projectclj"><span class="octicon octicon-link"></span></a>1. Setup your project.clj</h3>
+
+<p>Basically what you have to do here is to add the location where a source map is located with the option :source-map. You also need the :output-dir and :id options as well. Notice that the :optimizations are set to :simple as only works tested with :simple or :advanced compilation. Do not use :optimizations :whitespace. </p>
+
+<pre><code>:cljsbuild {:test-commands {"unit-tests" ["runners/phantomjs.js"
+                                        "resources/public/js/vendor/handlebars-1.0.rc.1.min.js"
+                                        "resources/private/js/unit-test.js"]}
+          :builds
+          [{:source-paths ["src/cljs"],
+            :id "dev",
+            :compiler {:pretty-print true,
+                       :output-dir "resources/public/js/bin-debug",
+                       :output-to "resources/public/js/bin-debug/main.js",
+                       :externs ["externs/jquery.js"
+                                 "resources/externs/stripe.js"
+                                 "resources/externs/handlebars.js"
+                                 "resources/externs/misc.js"],
+                       :optimizations :simple
+                       :source-map "resources/public/js/bin-debug/main.js.map"
+                       }}]}
+</code></pre>
+
+<p>Now run lein cljsbuild once dev and lein lein should produce your map where you specified.</p>
+
+<h3>
+<a name="2-edit-generated-javascript-file" class="anchor" href="#2-edit-generated-javascript-file"><span class="octicon octicon-link"></span></a>2. Edit generated javascript file</h3>
+
+<p><em>Note: all files specified need to be available from the server</em></p>
+
+<p>If lein compiled everything you should have the map(here: main.js.map) and an outputted javascript file(:output-to option from above). For now this file has to be edited by hand, changing the line at the bottom of the file to an address relative to the outputted js file like so:</p>
+
+<p><code>//@ sourceMappingURL=/js/bin-debug/main.js.map.merged</code></p>
+
+<p>This has to be done becase resources/public/ is probably mounted at /</p>
+
+<h3>
+<a name="3-edit-the-generated-map-file" class="anchor" href="#3-edit-the-generated-map-file"><span class="octicon octicon-link"></span></a>3. Edit the generated map file</h3>
+
+<p>The addresses in the main.js.map.merged file need to be changed similarly to the previous step so a relative path available on the server. </p>
+
+<pre><code>{"version":3,
+ "file":"resources/public/js/bin-debug/main.js.map",
+ "sources":
+ ["/Users/sgrove/src/example_clojure_app/src/cljs/settings/flow.cljs",...]
+</code></pre>
+
+<p>Open the file up and change the absolute paths to relative paths available from the front-end. If there are other paths pointing to jar files for example in maven repositories, you can ignore them.</p>
+
+<h3>
+<a name="4-copy-over-clojurescript-directories" class="anchor" href="#4-copy-over-clojurescript-directories"><span class="octicon octicon-link"></span></a>4. copy over clojurescript directories</h3>
+
+<p>Finally, because the clojurescript files aren't available by the browser front-end we have to additionally copy them over to a public directory to make them publicly available like the previous steps. _Note: Do not do this for production as anybody can see your source!
+Do a simple copy of your clojurescript directory structure like so:</p>
+
+<p><code>cp -r src resources/public</code></p>
+
+<p>Now after enabling source-map debugging in your browser(see link in beginning) you should see be able to debug and set breakpoints in your clojurescript code from the browsers debugger.  </p>
+
+<p>Once again thanks to Sean Grove!. </p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
