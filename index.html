@@ -32,7 +32,9 @@
 
 <p><img src="http://i.imgur.com/Lea1zjz.jpg?1" alt="Happy debugging!"></p>
 
-<p>So I heard about getting source maps working with clojurescript and after asking around on #clojure seangrove was nice enough to help me out. I'm basically hijacking the gist that <a href="https://github.com/sgrove" class="user-mention">@sgrove</a> sent me so all credit is to him. Using lein cljsbuild, lein will create a .map file which can be used after enabling source-map debugging in browsers. <a href="http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/">Here is a good intro if you aren't really sure what source maps are about.</a>. Now to get started:</p>
+<p>So I heard about getting source maps working with clojurescript and after asking around on #clojure seangrove was nice enough to help me out. I'm basically hijacking the gist that <a href="https://github.com/sgrove" class="user-mention">@sgrove</a> sent me so all credit is to him. This will get you up and running with clojurescript source-maps, but it is still a work in progress so don't expect it to be perfect. I believe the correct line reference may be off by one for example. </p>
+
+<p>Using lein cljsbuild, lein will create a .map file which can be used after enabling source-map debugging in browsers. <a href="http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/">Here is a good intro if you aren't really sure what source maps are about.</a>. Now to get started:</p>
 
 <h3>
 <a name="1-setup-your-projectclj" class="anchor" href="#1-setup-your-projectclj"><span class="octicon octicon-link"></span></a>1. Setup your project.clj</h3>
@@ -68,7 +70,7 @@
 
 <p><code>//@ sourceMappingURL=/js/bin-debug/main.js.map.merged</code></p>
 
-<p>This has to be done becase resources/public/ is probably mounted at /</p>
+<p>This has to be done because resources/public/ is probably mounted at /</p>
 
 <h3>
 <a name="3-edit-the-generated-map-file" class="anchor" href="#3-edit-the-generated-map-file"><span class="octicon octicon-link"></span></a>3. Edit the generated map file</h3>
